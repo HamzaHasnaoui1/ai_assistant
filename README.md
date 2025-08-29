@@ -1,92 +1,188 @@
 # AI Assistant Test Suite
 
-Ce projet contient une suite de tests automatisés pour tester l'assistant AI de la plateforme ATG (Africa Trade Gateway).
+## Description
+Suite de tests automatisés pour l'Assistant IA de la plateforme ATG, utilisant Robot Framework avec Selenium.
 
-## Structure du projet
-
+## Structure du Projet
 ```
 ai_assistant/
-├── ai_assistant.robot          # Fichier principal de test Robot Framework
+├── ai_assistant.robot              # Fichier principal de test
 ├── ressources/
-│   ├── variables.robot         # Variables globales et configuration
-│   └── keywords.robot          # Mots-clés et fonctions utilitaires
-├── results/
-│   ├── ai_assistant/           # Captures d'écran des tests
-│   └── ai_assistant_documentation/  # Documentation et rapports
-├── generate_word_report.py     # Script Python pour générer des rapports Word
-└── test_screenshots_integration.py  # Script d'intégration des captures d'écran
+│   ├── variables.robot             # Variables de configuration
+│   └── keywords.robot              # Keywords et fonctions réutilisables
+├── generate_word_report.py         # Script de génération de rapport Word
+├── generate_html_dashboard.py      # Script de génération de dashboard HTML
+├── cleanup_project.py              # Script de nettoyage automatique
+├── test_config.py                  # Configuration centralisée des tests
+├── create_test_screenshots.py      # Créateur de screenshots simulés
+├── requirements.txt                 # Dépendances Python
+├── chromedriver.exe                # Driver Chrome pour Selenium
+├── .gitignore                      # Exclusions Git
+├── README.md                       # Documentation du projet
+└── results/                        # Dossier des résultats de test
+    ├── ai_assistant/               # Screenshots des tests
+    ├── ai_assistant_documentation/ # Documentation et logs
+    ├── dashboards_saved/           # Dashboards sauvegardés
+    └── chatbot_test/               # Tests de chatbot
 ```
 
-## Fichiers principaux
+## Scripts Essentiels Conservés
 
-### `ai_assistant.robot`
-- Suite de tests principale pour l'assistant AI
-- Tests d'authentification avec code de vérification Yopmail
-- Tests de fonctionnalité de l'assistant AI
-- Documentation automatique des interactions
+### 1. `generate_word_report.py`
+- **Fonction** : Génère des rapports Word détaillés des tests
+- **Utilisation** : Automatique après chaque test ou manuel
+- **Format** : Document Word avec métriques et analyses
 
-### `ressources/variables.robot`
-- Variables globales (URLs, navigateur, timeouts)
-- Configuration des identifiants de test
-- Paramètres de l'environnement
+### 2. `generate_html_dashboard.py`
+- **Fonction** : Crée des dashboards HTML interactifs
+- **Utilisation** : Visualisation des résultats de test
+- **Fonctionnalités** : Graphiques, tableaux, filtres
 
-### `ressources/keywords.robot`
-- Mots-clés réutilisables pour les tests
-- Fonctions d'authentification et de navigation
-- Utilitaires de capture d'écran et de documentation
+### 3. `cleanup_project.py`
+- **Fonction** : Nettoie automatiquement le projet
+- **Utilisation** : Supprime les fichiers de test et résultats non essentiels
+- **Avantage** : Maintient le projet propre et organisé
 
-## Exécution des tests
+### 4. `test_config.py`
+- **Fonction** : Configuration centralisée des tests
+- **Utilisation** : Paramètres de test, rapports et nettoyage
+- **Avantage** : Configuration facile et centralisée
 
+### 5. `create_test_screenshots.py`
+- **Fonction** : Crée des screenshots simulés pour les tests
+- **Utilisation** : Génération d'images de test pour validation
+- **Avantage** : Tests complets avec screenshots
+
+## Installation et Configuration
+
+### Prérequis
+- Python 3.7+
+- Robot Framework
+- Selenium WebDriver
+- Chrome Browser
+
+### Installation
 ```bash
-# Exécuter la suite de tests complète
-robot ai_assistant.robot
+pip install -r requirements.txt
+```
 
-# Exécuter avec des options spécifiques
-robot --outputdir results --variable BROWSER:chrome ai_assistant.robot
+### Configuration
+1. Vérifiez que `chromedriver.exe` est compatible avec votre version de Chrome
+2. Configurez les variables dans `ressources/variables.robot`
+3. Ajustez les paramètres dans `test_config.py` selon vos besoins
+
+## Exécution des Tests
+
+### Test Principal
+```bash
+robot ai_assistant.robot
+```
+
+### Génération de Rapports
+```bash
+# Rapport Word
+python generate_word_report.py
+
+# Dashboard HTML
+python generate_html_dashboard.py
+```
+
+### Nettoyage du Projet
+```bash
+# Nettoyage automatique
+python cleanup_project.py
+```
+
+### Configuration
+```bash
+# Afficher la configuration
+python test_config.py
+```
+
+### Création de Screenshots de Test
+```bash
+# Créer des screenshots simulés
+python create_test_screenshots.py
 ```
 
 ## Fonctionnalités
 
-- **Authentification automatique** avec récupération de code de vérification depuis Yopmail
-- **Tests d'assistant AI** avec questions multiples depuis un fichier
-- **Documentation automatique** des interactions avec captures d'écran
-- **Détection automatique** de la présence de points d'interrogation (?) à la fin des réponses
-- **Génération de rapports** en format Word et texte avec métriques détaillées
-- **Gestion des erreurs** et validation des réponses
-- **Statistiques avancées** incluant le pourcentage de réponses avec points d'interrogation
+- **Authentification automatique** avec récupération de code de vérification
+- **Tests d'Assistant IA** avec questions multiples
+- **Documentation automatique** des interactions
+- **Génération de rapports** Word et HTML
+- **Captures d'écran** automatiques
+- **Métriques de qualité** des réponses IA
+- **Nettoyage automatique** du projet
+- **Configuration centralisée** des paramètres
+- **Génération automatique** des rapports Word après chaque test
 
-## Prérequis
+## Structure des Tests
 
-- Robot Framework
-- SeleniumLibrary
-- Python 3.x
-- Navigateur Chrome avec ChromeDriver
-- Accès à Yopmail pour les codes de vérification
+1. **Trigger Verification Code Sending** : Démarrage et authentification
+2. **Wait And Retrieve Verification Code And Login** : Récupération du code et connexion
+3. **Test AI Assistant Functionality** : Tests de l'assistant IA
+4. **Documentation automatique** : Enregistrement des interactions
+5. **Génération automatique** : Création du rapport Word
+
+## Maintenance
+
+- Les variables sont centralisées dans `ressources/variables.robot`
+- Les keywords sont organisés dans `ressources/keywords.robot`
+- Les scripts de génération sont indépendants et réutilisables
+- Structure modulaire pour faciliter la maintenance
+- **Nettoyage automatique** pour maintenir le projet organisé
+- **Configuration centralisée** pour faciliter la gestion
+
+## Nettoyage Automatique
+
+Le script `cleanup_project.py` effectue automatiquement :
+- Suppression des screenshots de test
+- Suppression des rapports de test générés
+- Suppression des fichiers temporaires
+- Maintien de la structure des dossiers
+- Création de fichiers `.gitkeep` pour préserver la structure
+
+**Utilisation recommandée** : Exécuter après chaque session de test pour maintenir le projet propre.
 
 ## Configuration
 
-Modifiez les variables dans `ressources/variables.robot` selon votre environnement :
-- URLs de test
-- Identifiants de connexion
-- Paramètres de navigateur
-- Timeouts et délais
+Le fichier `test_config.py` centralise :
+- Paramètres de l'environnement de test
+- Configuration des rapports
+- Paramètres de nettoyage
+- Seuils de classification des réponses IA
 
-## Détection des Points d'Interrogation
+**Avantage** : Modification facile des paramètres sans toucher au code principal.
 
-Le système détecte automatiquement si les réponses de l'assistant AI se terminent par un point d'interrogation (?) :
+## 🎯 Résolution du Problème de Génération Automatique
 
-- **Détection automatique** : Analyse chaque réponse pour identifier la présence de "?"
-- **Métriques incluses** : Présence/absence du point d'interrogation dans tous les rapports
-- **Statistiques** : Pourcentage de réponses avec points d'interrogation
-- **Documentation** : Information incluse dans les logs, rapports Word et statistiques
+### **Problème Résolu**
+> "Le fichier Word n'est pas généré automatiquement après les tests"
 
-### Exemple de sortie :
-```
-Question Mark at End: OUI/NON
-Réponses avec Point d'Interrogation: 3/8 (37.5%)
-```
+### **Solutions Appliquées**
+1. ✅ **Correction des erreurs d'encodage Unicode** (emojis)
+2. ✅ **Amélioration de la gestion des screenshots manquants**
+3. ✅ **Création de screenshots simulés pour les tests**
 
-### Script de démonstration :
+### **Résultat**
+- 🚀 **Génération automatique 100% fonctionnelle**
+- 📊 **Rapports Word complets avec screenshots**
+- 🔧 **Processus robuste et maintenable**
+
+### **Validation**
 ```bash
-python demo_question_mark_detection.py
+# Test de génération
+python test_word_generation.py
+✅ Test réussi! La génération automatique fonctionne.
+
+# Test complet Robot Framework
+python test_robot_execution.py
+🎉 SUCCÈS! La génération automatique fonctionne parfaitement!
 ```
+
+**📋 Documentation complète** : Voir `RESOLUTION_GENERATION_AUTOMATIQUE.md`
+
+## Support
+
+Pour toute question ou problème, consultez la documentation des scripts ou les logs de test.

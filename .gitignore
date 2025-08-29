@@ -1,67 +1,58 @@
 # Robot Framework
 *.log
-*.html
 *.xml
+*.html
 output.xml
 log.html
 report.html
 
+# Screenshots de test
+selenium-screenshot-*.png
+*.png
+
+# Rapports de test
+results/ai_assistant_documentation/test_report_*.docx
+results/ai_assistant_documentation/dashboard_test_*.html
+results/ai_assistant_documentation/current_test_*.txt
+results/ai_assistant_documentation/~$st_report_*.docx
+
+# Fichiers temporaires
+*.tmp
+*.temp
+~$*
+
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual Environment
-venv/
 env/
-ENV/
+venv/
+.venv/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Screenshots et fichiers de résultats
-results/ai_assistant/screenshots/
-results/ai_assistant_documentation/screenshots/
-results/chatbot_test/
-selenium-screenshot-*.png
+# Logs
+*.log
+logs/
 
-# Fichiers Word temporaires
-~$*.docx
+# Résultats de test (garder la structure mais pas le contenu)
+results/ai_assistant_documentation/*.txt
+results/ai_assistant_documentation/*.docx
+results/ai_assistant_documentation/*.html
+results/ai_assistant_documentation/screenshots/*.png
 
-# Fichiers temporaires
-*.tmp
-*.temp
-*.bak
-
-# ChromeDriver (optionnel)
-chromedriver*
-chromedriver.exe
-
-# Fichiers de test générés
-results/ai_assistant_documentation/current_test_*.txt
-results/ai_assistant_documentation/rapport_*.txt
+# Garder les dossiers vides
+!results/ai_assistant_documentation/
+!results/ai_assistant_documentation/screenshots/
+!results/dashboards_saved/
+!results/ai_assistant/

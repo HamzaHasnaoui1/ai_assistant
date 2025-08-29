@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Script pour générer automatiquement des rapports Word à partir des fichiers current_test_*.txt
-Génère un rapport Word professionnel avec mise en forme pour chaque test
+Script to automatically generate Word reports from current_test_*.txt files
+Generates a professional Word report with formatting for each test
 """
 
 import os
@@ -22,43 +22,43 @@ class WordReportGenerator:
         self.ai_doc_dir = os.path.join(output_dir, "ai_assistant_documentation")
         
     def find_current_test_files(self):
-        """Trouve tous les fichiers current_test_*.txt"""
+        """Finds all current_test_*.txt files"""
         pattern = os.path.join(self.ai_doc_dir, "current_test_*.txt")
         return glob.glob(pattern)
     
     def parse_test_file(self, file_path):
-        """Parse le contenu d'un fichier de test et extrait les informations"""
+        """Parses the content of a test file and extracts information"""
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
             
-            # Extraire le nom du fichier de test
+            # Extract test file name
             test_name = os.path.basename(file_path)
             
-            # Extraire les interactions en utilisant une approche différente
+            # Extract interactions using a different approach
             interactions = []
             
-            # Chercher toutes les occurrences de "AI ASSISTANT INTERACTION DOCUMENTATION"
+            # Look for all occurrences of "AI ASSISTANT INTERACTION DOCUMENTATION"
             import re
             pattern = r'AI ASSISTANT INTERACTION DOCUMENTATION(.*?)(?=AI ASSISTANT INTERACTION DOCUMENTATION|$)'
             matches = re.findall(pattern, content, re.DOTALL)
             
             for match in matches:
-                # Ajouter le titre de section au début
+                # Add section title at the beginning
                 section = "AI ASSISTANT INTERACTION DOCUMENTATION" + match
-                # Extraire les informations de l'interaction
+                # Extract interaction information
                 interaction = self.extract_interaction_info(section)
                 if interaction:
                     interactions.append(interaction)
             
-            # Si aucune interaction trouvée avec la nouvelle méthode, essayer l'ancienne
+            # If no interactions found with the new method, try the old one
             if not interactions:
-                print("⚠️ Nouvelle méthode de parsing échouée, essai avec l'ancienne méthode...")
+                print("⚠️ New parsing method failed, trying with old method...")
                 sections = content.split("========================================")
                 
                 for section in sections:
                     if "AI ASSISTANT INTERACTION DOCUMENTATION" in section and len(section.strip()) > 100:
-                        # Extraire les informations de l'interaction
+                        # Extract interaction information
                         interaction = self.extract_interaction_info(section)
                         if interaction:
                             interactions.append(interaction)
@@ -71,45 +71,45 @@ class WordReportGenerator:
             }
             
         except Exception as e:
-            print(f"Erreur lors du parsing de {file_path}: {e}")
+            print(f"Error parsing {file_path}: {e}")
             return None
     
     def extract_interaction_info(self, section):
-        """Extrait les informations d'une interaction depuis une section"""
+        """Extracts interaction information from a section"""
         try:
-            # Extraire le timestamp
+            # Extract timestamp
             timestamp_match = re.search(r'Timestamp: (.+)', section)
             timestamp = timestamp_match.group(1).strip() if timestamp_match else "N/A"
             
-            # Extraire la question
+            # Extract question
             question_match = re.search(r'Question Asked:\s*\n"([^"]+)"', section, re.DOTALL)
             question = question_match.group(1).strip() if question_match else "N/A"
             
-            # Extraire la réponse
+            # Extract answer
             answer_match = re.search(r'AI Response:\s*\n"([^"]+)"', section, re.DOTALL)
             answer = answer_match.group(1).strip() if answer_match else "N/A"
             
-            # Extraire la catégorie
+            # Extract category
             category_match = re.search(r'Response Category: (.+)', section)
             category = category_match.group(1).strip() if category_match else "N/A"
             
-            # Extraire la longueur
+            # Extract length
             length_match = re.search(r'Response Length: (\d+) characters', section)
             length = length_match.group(1) if length_match else "N/A"
             
-            # Extraire le nombre de mots
+            # Extract word count
             words_match = re.search(r'Word Count: (\d+)', section)
             words = words_match.group(1) if words_match else "N/A"
             
-            # Extraire le score de qualité
+            # Extract quality score
             quality_match = re.search(r'Quality Score: ([\d.]+)%', section)
             quality = quality_match.group(1) if quality_match else "N/A"
             
-            # Extraire la présence du point d'interrogation
+            # Extract question mark presence
             question_mark_match = re.search(r'Question Mark at End: (.+)', section)
             question_mark = question_mark_match.group(1).strip() if question_mark_match else "N/A"
             
-            # Extraire les chemins des screenshots
+            # Extract screenshot paths
             q_screenshot_match = re.search(r'Question Screenshot: (.+)', section)
             q_screenshot = q_screenshot_match.group(1).strip() if q_screenshot_match else "N/A"
             
@@ -130,39 +130,39 @@ class WordReportGenerator:
             }
             
         except Exception as e:
-            print(f"Erreur lors de l'extraction des informations: {e}")
+            print(f"Error extracting information: {e}")
             return None
     
     def create_word_document(self, test_data):
-        """Crée un document Word pour un test donné"""
+        """Creates a Word document for a given test"""
         try:
-            # Créer un nouveau document
+            # Create a new document
             doc = Document()
             
-            # Titre principal
-            title = doc.add_heading('Rapport de Test - Assistant IA', 0)
+            # Main title
+            title = doc.add_heading('Test Report - AI Assistant', 0)
             title.alignment = WD_ALIGN_PARAGRAPH.CENTER
             
-            # Ajouter un logo ou image de l'entreprise (optionnel)
+            # Add company logo or image (optional)
             # doc.add_picture('logo_atg.png', width=Inches(2))
             
-            # Informations du test
-            doc.add_heading('Informations Générales', level=1)
+            # Test information
+            doc.add_heading('General Information', level=1)
             
             info_table = doc.add_table(rows=1, cols=2)
             info_table.style = 'Table Grid'
             
-            # En-têtes
+            # Headers
             header_cells = info_table.rows[0].cells
-            header_cells[0].text = 'Propriété'
-            header_cells[1].text = 'Valeur'
+            header_cells[0].text = 'Property'
+            header_cells[1].text = 'Value'
             
-            # Informations
+            # Information
             info_data = [
-                ('Nom du Test', test_data['test_name']),
-                ('Fichier Source', test_data['file_path']),
-                ('Nombre Total d\'Interactions', str(test_data['total_interactions'])),
-                ('Date de Génération', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                ('Test Name', test_data['test_name']),
+                ('Source File', test_data['file_path']),
+                ('Total Interactions', str(test_data['total_interactions'])),
+                ('Generation Date', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             ]
             
             for prop, value in info_data:
@@ -170,23 +170,77 @@ class WordReportGenerator:
                 row_cells[0].text = prop
                 row_cells[1].text = value
             
-            # Résumé des interactions
-            doc.add_heading('Résumé des Interactions', level=1)
+            # Calculation Methods
+            doc.add_heading('Calculation Methods', level=1)
+            
+            # Category calculation explanation
+            doc.add_heading('Response Category Classification', level=2)
+            category_explanation = doc.add_paragraph()
+            category_explanation.add_run('The AI responses are automatically classified into three categories based on length and word count thresholds:').bold = True
+            doc.add_paragraph()
+            
+            category_table = doc.add_table(rows=1, cols=3)
+            category_table.style = 'Table Grid'
+            category_table.alignment = WD_TABLE_ALIGNMENT.CENTER
+            
+            # Category headers
+            cat_headers = category_table.rows[0].cells
+            cat_headers[0].text = 'Category'
+            cat_headers[1].text = 'Character Threshold'
+            cat_headers[2].text = 'Word Threshold'
+            
+            # Category data
+            category_data = [
+                ('LONG', '> 250 characters', '> 50 words'),
+                ('MEDIUM', '≥ 100 characters', '≥ 20 words'),
+                ('SHORT', '< 100 characters', '< 20 words')
+            ]
+            
+            for cat, char_thresh, word_thresh in category_data:
+                row_cells = category_table.add_row().cells
+                row_cells[0].text = cat
+                row_cells[1].text = char_thresh
+                row_cells[2].text = word_thresh
+            
+            doc.add_paragraph()
+            doc.add_paragraph('Note: A response is classified as LONG if it exceeds EITHER the character OR word threshold. MEDIUM requires meeting BOTH thresholds. SHORT applies when BOTH thresholds are below the minimum.')
+            
+            # Quality score calculation explanation
+            doc.add_heading('Quality Score Calculation', level=2)
+            quality_explanation = doc.add_paragraph()
+            quality_explanation.add_run('The quality score is calculated based on the response length relative to the LONG threshold:').bold = True
+            doc.add_paragraph()
+            
+            quality_formula = doc.add_paragraph()
+            quality_formula.add_run('Quality Score = min(100, (Response Length / 250) × 100)').italic = True
+            doc.add_paragraph()
+            
+            quality_details = doc.add_paragraph()
+            quality_details.add_run('Where:').bold = True
+            doc.add_paragraph('• Response Length = Number of characters in the AI response')
+            doc.add_paragraph('• 250 = LONG_CHAR_THRESHOLD (maximum threshold for LONG category)')
+            doc.add_paragraph('• The score is capped at 100% maximum')
+            doc.add_paragraph('• Higher scores indicate responses that are closer to or exceed the LONG threshold')
+            
+            doc.add_paragraph()
+            
+            # Interactions summary
+            doc.add_heading('Interactions Summary', level=1)
             
             if test_data['interactions']:
                 summary_table = doc.add_table(rows=1, cols=6)
                 summary_table.style = 'Table Grid'
                 
-                # En-têtes du résumé
+                # Summary headers
                 summary_headers = summary_table.rows[0].cells
-                summary_headers[0].text = 'N°'
+                summary_headers[0].text = 'No.'
                 summary_headers[1].text = 'Timestamp'
                 summary_headers[2].text = 'Question'
-                summary_headers[3].text = 'Catégorie'
-                summary_headers[4].text = 'Score Qualité'
-                summary_headers[5].text = 'Point d\'Interrogation'
+                summary_headers[3].text = 'Category'
+                summary_headers[4].text = 'Quality Score'
+                summary_headers[5].text = 'Question Mark'
                 
-                # Données du résumé
+                # Summary data
                 for i, interaction in enumerate(test_data['interactions'], 1):
                     row_cells = summary_table.add_row().cells
                     row_cells[0].text = str(i)
@@ -196,39 +250,39 @@ class WordReportGenerator:
                     row_cells[4].text = f"{interaction['quality']}%"
                     row_cells[5].text = interaction['question_mark']
             
-            # Détails des interactions
-            doc.add_heading('Détails des Interactions', level=1)
+            # Interaction details
+            doc.add_heading('Interaction Details', level=1)
             
             for i, interaction in enumerate(test_data['interactions'], 1):
-                # Titre de l'interaction
+                # Interaction title
                 doc.add_heading(f'Interaction {i}', level=2)
                 
-                # Section Question
+                # Question section
                 doc.add_heading('Question', level=3)
                 doc.add_paragraph(interaction['question'])
                 
-                # Section Réponse IA
-                doc.add_heading('Réponse IA', level=3)
+                # AI Response section
+                doc.add_heading('AI Response', level=3)
                 doc.add_paragraph(interaction['answer'])
                 
-                # Tableau des métriques
+                # Metrics table
                 metrics_table = doc.add_table(rows=1, cols=2)
                 metrics_table.style = 'Table Grid'
                 metrics_table.alignment = WD_TABLE_ALIGNMENT.CENTER
                 
-                # En-têtes
+                # Headers
                 metrics_headers = metrics_table.rows[0].cells
-                metrics_headers[0].text = 'Métrique'
-                metrics_headers[1].text = 'Valeur'
+                metrics_headers[0].text = 'Metric'
+                metrics_headers[1].text = 'Value'
                 
-                # Métriques
+                # Metrics
                 metrics_data = [
                     ('Timestamp', interaction['timestamp']),
-                    ('Catégorie', interaction['category']),
-                    ('Longueur', f"{interaction['length']} caractères"),
-                    ('Mots', interaction['words']),
-                    ('Score Qualité', f"{interaction['quality']}%"),
-                    ('Point d\'Interrogation', interaction['question_mark'])
+                    ('Category', interaction['category']),
+                    ('Length', f"{interaction['length']} characters"),
+                    ('Words', interaction['words']),
+                    ('Quality Score', f"{interaction['quality']}%"),
+                    ('Question Mark', interaction['question_mark'])
                 ]
                 
                 for prop, value in metrics_data:
@@ -236,46 +290,46 @@ class WordReportGenerator:
                     row_cells[0].text = prop
                     row_cells[1].text = value
                 
-                # Section Captures d'écran
-                doc.add_heading('Captures d\'écran', level=3)
+                # Screenshots section
+                doc.add_heading('Screenshots', level=3)
                 
-                # Captures d'écran avec gestion d'erreur
+                # Screenshots with error handling
                 self.add_screenshots_to_document(doc, interaction, i)
                 
-                # Ajouter un espace entre les interactions
+                # Add space between interactions
                 doc.add_paragraph()
             
-            # Statistiques détaillées
+            # Detailed statistics
             if test_data['interactions']:
-                doc.add_heading('Statistiques Détaillées', level=1)
+                doc.add_heading('Detailed Statistics', level=1)
                 
-                # Calculer les statistiques
+                # Calculate statistics
                 categories = [i['category'] for i in test_data['interactions']]
                 qualities = [float(i['quality']) for i in test_data['interactions'] if i['quality'] != 'N/A']
                 lengths = [int(i['length']) for i in test_data['interactions'] if i['length'] != 'N/A']
                 words = [int(i['words']) for i in test_data['interactions'] if i['words'] != 'N/A']
                 question_marks = [i['question_mark'] for i in test_data['interactions']]
                 
-                # Statistiques principales
+                # Main statistics
                 main_stats_data = [
-                    ('Nombre Total d\'Interactions', str(len(test_data['interactions']))),
-                    ('Catégories Présentes', ', '.join(set(categories))),
-                    ('Score Qualité Moyen', f"{sum(qualities)/len(qualities):.2f}%" if qualities else "N/A"),
-                    ('Longueur Moyenne', f"{sum(lengths)/len(lengths):.0f} caractères" if lengths else "N/A"),
-                    ('Mots Moyens', f"{sum(words)/len(words):.0f} mots" if words else "N/A"),
-                    ('Réponses avec Point d\'Interrogation', f"{question_marks.count('OUI')}/{len(question_marks)} ({question_marks.count('OUI')/len(question_marks)*100:.1f}%)" if question_marks else "N/A")
+                    ('Total Interactions', str(len(test_data['interactions']))),
+                    ('Present Categories', ', '.join(set(categories))),
+                    ('Average Quality Score', f"{sum(qualities)/len(qualities):.2f}%" if qualities else "N/A"),
+                    ('Average Length', f"{sum(lengths)/len(lengths):.0f} characters" if lengths else "N/A"),
+                    ('Average Words', f"{sum(words)/len(words):.0f} words" if words else "N/A"),
+                    ('Responses with Question Mark', f"{question_marks.count('YES')}/{len(question_marks)} ({question_marks.count('YES')/len(question_marks)*100:.1f}%)" if question_marks else "N/A")
                 ]
                 
                 main_stats_table = doc.add_table(rows=1, cols=2)
                 main_stats_table.style = 'Table Grid'
                 main_stats_table.alignment = WD_TABLE_ALIGNMENT.CENTER
                 
-                # En-têtes
+                # Headers
                 main_stats_headers = main_stats_table.rows[0].cells
-                main_stats_headers[0].text = 'Métrique'
-                main_stats_headers[1].text = 'Valeur'
+                main_stats_headers[0].text = 'Metric'
+                main_stats_headers[1].text = 'Value'
                 
-                # Statistiques principales
+                # Main statistics
                 for metric, value in main_stats_data:
                     row_cells = main_stats_table.add_row().cells
                     row_cells[0].text = metric
@@ -283,24 +337,24 @@ class WordReportGenerator:
                 
                 doc.add_paragraph()
                 
-                # Statistiques des extrêmes
+                # Extreme statistics
                 if qualities:
                     extreme_stats_data = [
-                        ('Score Qualité Maximum', f"{max(qualities):.2f}%"),
-                        ('Score Qualité Minimum', f"{min(qualities):.2f}%"),
-                        ('Écart de Qualité', f"{max(qualities) - min(qualities):.2f}%")
+                        ('Maximum Quality Score', f"{max(qualities):.2f}%"),
+                        ('Minimum Quality Score', f"{min(qualities):.2f}%"),
+                        ('Quality Range', f"{max(qualities) - min(qualities):.2f}%")
                     ]
                     
                     extreme_stats_table = doc.add_table(rows=1, cols=2)
                     extreme_stats_table.style = 'Table Grid'
                     extreme_stats_table.alignment = WD_TABLE_ALIGNMENT.CENTER
                     
-                    # En-têtes
+                    # Headers
                     extreme_headers = extreme_stats_table.rows[0].cells
-                    extreme_headers[0].text = 'Métrique'
-                    extreme_headers[1].text = 'Valeur'
+                    extreme_headers[0].text = 'Metric'
+                    extreme_headers[1].text = 'Value'
                     
-                    # Statistiques des extrêmes
+                    # Extreme statistics
                     for metric, value in extreme_stats_data:
                         row_cells = extreme_stats_table.add_row().cells
                         row_cells[0].text = metric
@@ -308,7 +362,7 @@ class WordReportGenerator:
                 
                 doc.add_paragraph()
                 
-                # Analyse par catégorie
+                # Category analysis
                 category_analysis = {}
                 for interaction in test_data['interactions']:
                     cat = interaction['category']
@@ -322,20 +376,20 @@ class WordReportGenerator:
                         category_analysis[cat]['lengths'].append(int(interaction['length']))
                 
                 if category_analysis:
-                    doc.add_heading('Analyse par Catégorie', level=2)
+                    doc.add_heading('Category Analysis', level=2)
                     
                     cat_table = doc.add_table(rows=1, cols=4)
                     cat_table.style = 'Table Grid'
                     cat_table.alignment = WD_TABLE_ALIGNMENT.CENTER
                     
-                    # En-têtes
+                    # Headers
                     cat_headers = cat_table.rows[0].cells
-                    cat_headers[0].text = 'Catégorie'
-                    cat_headers[1].text = 'Nombre'
-                    cat_headers[2].text = 'Qualité Moyenne'
-                    cat_headers[3].text = 'Longueur Moyenne'
+                    cat_headers[0].text = 'Category'
+                    cat_headers[1].text = 'Count'
+                    cat_headers[2].text = 'Average Quality'
+                    cat_headers[3].text = 'Average Length'
                     
-                    # Données par catégorie
+                    # Data by category
                     for cat, data in category_analysis.items():
                         row_cells = cat_table.add_row().cells
                         row_cells[0].text = cat
@@ -353,216 +407,175 @@ class WordReportGenerator:
                         else:
                             row_cells[3].text = "N/A"
             
-            # Galerie des captures d'écran
-            if test_data['interactions']:
-                doc.add_heading('Galerie des Captures d\'écran', level=1)
-                self.add_summary_screenshots(doc, test_data)
+            # Screenshots gallery section removed as requested
             
-            # Pied de page
+            # Footer
             doc.add_paragraph()
-            footer = doc.add_paragraph('Rapport généré automatiquement par le système de test ATG')
+            footer = doc.add_paragraph('Report automatically generated by ATG test system')
             footer.alignment = WD_ALIGN_PARAGRAPH.CENTER
             
             return doc
             
         except Exception as e:
-            print(f"Erreur lors de la création du document Word: {e}")
+            print(f"Error creating Word document: {e}")
             return None
     
     def add_screenshots_to_document(self, doc, interaction, interaction_number):
-        """Ajoute les captures d'écran au document Word"""
+        """Adds screenshots to the Word document"""
         try:
-            # Captures d'écran de la question
+            # Question screenshots
             if interaction['q_screenshot'] != 'N/A':
                 q_screenshot_path = interaction['q_screenshot']
                 if os.path.exists(q_screenshot_path):
                     doc.add_paragraph(f'Question {interaction_number}:')
                     try:
-                        # Insérer l'image avec une taille appropriée
+                        # Insert image with appropriate size
                         doc.add_picture(q_screenshot_path, width=Inches(6))
-                        doc.add_paragraph(f'Fichier: {os.path.basename(q_screenshot_path)}')
+                        doc.add_paragraph(f'File: {os.path.basename(q_screenshot_path)}')
                     except Exception as e:
-                        doc.add_paragraph(f'❌ Erreur lors de l\'insertion de l\'image: {e}')
-                        doc.add_paragraph(f'Chemin: {q_screenshot_path}')
+                        doc.add_paragraph(f'[ERROR] Error inserting image: {e}')
+                        doc.add_paragraph(f'Path: {q_screenshot_path}')
                 else:
-                    doc.add_paragraph(f'❌ Capture d\'écran question non trouvée: {q_screenshot_path}')
+                    doc.add_paragraph(f'[INFO] Question screenshot not available: {os.path.basename(q_screenshot_path)}')
+                    doc.add_paragraph('Note: Screenshot file was not found during test execution')
             else:
-                doc.add_paragraph('Aucune capture d\'écran de question disponible')
+                doc.add_paragraph('No question screenshot available')
             
-            # Espace entre les captures
+            # Space between screenshots
             doc.add_paragraph()
             
-            # Captures d'écran de la réponse
+            # Response screenshots
             if interaction['r_screenshot'] != 'N/A':
                 r_screenshot_path = interaction['r_screenshot']
                 if os.path.exists(r_screenshot_path):
-                    doc.add_paragraph(f'Réponse {interaction_number}:')
+                    doc.add_paragraph(f'Response {interaction_number}:')
                     try:
-                        # Insérer l'image avec une taille appropriée
+                        # Insert image with appropriate size
                         doc.add_picture(r_screenshot_path, width=Inches(6))
-                        doc.add_paragraph(f'Fichier: {os.path.basename(r_screenshot_path)}')
+                        doc.add_paragraph(f'File: {os.path.basename(r_screenshot_path)}')
                     except Exception as e:
-                        doc.add_paragraph(f'❌ Erreur lors de l\'insertion de l\'image: {e}')
-                        doc.add_paragraph(f'Chemin: {r_screenshot_path}')
+                        doc.add_paragraph(f'[ERROR] Error inserting image: {e}')
+                        doc.add_paragraph(f'Path: {r_screenshot_path}')
                 else:
-                    doc.add_paragraph(f'❌ Capture d\'écran réponse non trouvée: {r_screenshot_path}')
+                    doc.add_paragraph(f'[INFO] Response screenshot not available: {os.path.basename(r_screenshot_path)}')
+                    doc.add_paragraph('Note: Screenshot file was not found during test execution')
             else:
-                doc.add_paragraph('Aucune capture d\'écran de réponse disponible')
+                doc.add_paragraph('No response screenshot available')
             
-            # Espace après les captures
+            # Space after screenshots
             doc.add_paragraph()
             
         except Exception as e:
-            doc.add_paragraph(f'❌ Erreur lors de l\'ajout des captures d\'écran: {e}')
+            doc.add_paragraph(f'[ERROR] Error adding screenshots: {e}')
     
-    def add_summary_screenshots(self, doc, test_data):
-        """Ajoute un résumé des captures d'écran à la fin du document"""
-        try:
-            doc.add_heading('Galerie des Captures d\'écran', level=1)
-            
-            # Créer un tableau pour organiser les captures
-            screenshot_table = doc.add_table(rows=1, cols=2)
-            screenshot_table.style = 'Table Grid'
-            screenshot_table.alignment = WD_TABLE_ALIGNMENT.CENTER
-            
-            # En-têtes
-            headers = screenshot_table.rows[0].cells
-            headers[0].text = 'Question'
-            headers[1].text = 'Réponse'
-            
-            # Ajouter les captures d'écran dans le tableau
-            for i, interaction in enumerate(test_data['interactions'], 1):
-                row_cells = screenshot_table.add_row().cells
-                
-                # Cellule Question
-                if interaction['q_screenshot'] != 'N/A' and os.path.exists(interaction['q_screenshot']):
-                    try:
-                        row_cells[0].add_paragraph(f'Q{i}:')
-                        row_cells[0].add_picture(interaction['q_screenshot'], width=Inches(2.5))
-                    except:
-                        row_cells[0].text = f'Q{i}: Image non disponible'
-                else:
-                    row_cells[0].text = f'Q{i}: Aucune image'
-                
-                # Cellule Réponse
-                if interaction['r_screenshot'] != 'N/A' and os.path.exists(interaction['r_screenshot']):
-                    try:
-                        row_cells[1].add_paragraph(f'R{i}:')
-                        row_cells[1].add_picture(interaction['r_screenshot'], width=Inches(2.5))
-                    except:
-                        row_cells[1].text = f'R{i}: Image non disponible'
-                else:
-                    row_cells[1].text = f'R{i}: Aucune image'
-            
-        except Exception as e:
-            doc.add_paragraph(f'❌ Erreur lors de l\'ajout de la galerie: {e}')
+    # add_summary_screenshots function removed as requested
     
     def save_word_document(self, doc, test_data):
-        """Sauvegarde le document Word"""
+        """Saves the Word document"""
         try:
-            # Créer le nom du fichier Word
+            # Create Word filename
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            word_filename = f"rapport_test_{timestamp}.docx"
+            word_filename = f"test_report_{timestamp}.docx"
             word_path = os.path.join(self.ai_doc_dir, word_filename)
             
-            # Sauvegarder le document
+            # Save document
             doc.save(word_path)
-            print(f"Rapport Word sauvegardé: {word_path}")
+            print(f"Word report saved: {word_path}")
             
             return word_path
             
         except Exception as e:
-            print(f"Erreur lors de la sauvegarde du document Word: {e}")
+            print(f"Error saving Word document: {e}")
             return None
     
     def generate_all_reports(self):
-        """Génère des rapports Word pour tous les tests trouvés"""
-        print("Recherche des fichiers de test...")
+        """Generates Word reports for all found tests"""
+        print("Searching for test files...")
         test_files = self.find_current_test_files()
         
         if not test_files:
-            print("Aucun fichier de test trouvé.")
+            print("No test files found.")
             return
         
-        print(f"Trouvé {len(test_files)} fichier(s) de test.")
+        print(f"Found {len(test_files)} test file(s).")
         
         for test_file in test_files:
-            print(f"\nTraitement de: {test_file}")
+            print(f"\nProcessing: {test_file}")
             
-            # Parser le fichier de test
+            # Parse test file
             test_data = self.parse_test_file(test_file)
             if not test_data:
-                print(f"Impossible de parser {test_file}")
+                print(f"Cannot parse {test_file}")
                 continue
             
-            # Créer le document Word
+            # Create Word document
             doc = self.create_word_document(test_data)
             if not doc:
-                print(f"Impossible de créer le document Word pour {test_file}")
+                print(f"Cannot create Word document for {test_file}")
                 continue
             
-            # Sauvegarder le document
+            # Save document
             word_path = self.save_word_document(doc, test_data)
             if word_path:
-                print(f"Rapport Word généré avec succès: {word_path}")
+                print(f"Word report generated successfully: {word_path}")
             else:
-                print(f"Échec de la sauvegarde du rapport Word pour {test_file}")
+                print(f"Failed to save Word report for {test_file}")
     
     def generate_report_for_latest_test(self):
-        """Génère un rapport Word pour le test le plus récent"""
+        """Generates a Word report for the most recent test"""
         test_files = self.find_current_test_files()
         
         if not test_files:
-            print("Aucun fichier de test trouvé.")
+            print("No test files found.")
             return None
         
-        # Trier par date de modification (le plus récent en premier)
+        # Sort by modification date (most recent first)
         test_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
         latest_test = test_files[0]
         
-        print(f"Génération du rapport pour le test le plus récent: {latest_test}")
+        print(f"Generating report for most recent test: {latest_test}")
         
-        # Parser le fichier de test
+        # Parse test file
         test_data = self.parse_test_file(latest_test)
         if not test_data:
-            print(f"Impossible de parser {latest_test}")
+            print(f"Cannot parse {latest_test}")
             return None
         
-        # Créer le document Word
+        # Create Word document
         doc = self.create_word_document(test_data)
         if not doc:
-            print(f"Impossible de créer le document Word pour {latest_test}")
+            print(f"Cannot create Word document for {latest_test}")
             return None
         
-        # Sauvegarder le document
+        # Save document
         word_path = self.save_word_document(doc, test_data)
         if word_path:
-            print(f"Rapport Word généré avec succès: {word_path}")
+            print(f"Word report generated successfully: {word_path}")
             return word_path
         else:
-            print(f"Échec de la sauvegarde du rapport Word pour {latest_test}")
+            print(f"Failed to save Word report for {latest_test}")
             return None
 
 def main():
-    """Fonction principale"""
-    print("=== Générateur de Rapports Word pour Tests ATG ===")
+    """Main function"""
+    print("=== ATG Test Word Report Generator ===")
     
-    # Créer le générateur
+    # Create generator
     generator = WordReportGenerator()
     
-    # Vérifier que le répertoire existe
+    # Check if directory exists
     if not os.path.exists(generator.ai_doc_dir):
-        print(f"Le répertoire {generator.ai_doc_dir} n'existe pas.")
+        print(f"Directory {generator.ai_doc_dir} does not exist.")
         return
     
-    # Générer le rapport pour le test le plus récent
-    print("\nGénération du rapport pour le test le plus récent...")
+    # Generate report for most recent test
+    print("\nGenerating report for most recent test...")
     word_path = generator.generate_report_for_latest_test()
     
     if word_path:
-        print(f"\n✅ Rapport Word généré avec succès: {word_path}")
+        print(f"\n[SUCCESS] Word report generated successfully: {word_path}")
     else:
-        print("\n❌ Échec de la génération du rapport Word")
+        print("\n[ERROR] Failed to generate Word report")
 
 if __name__ == "__main__":
     main()
