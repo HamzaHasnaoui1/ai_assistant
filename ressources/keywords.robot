@@ -504,6 +504,9 @@ Wait And Retrieve Verification Code And Login
     Wait Until Location Is    ${UAT_BASE_URL}    timeout=15s
     Capture Page Screenshot    ${OUTPUT_DIR}/ai_assistant/login_success.png
     Wait Until Element Is Visible    //aside[contains(@class, 'ant-layout-sider')]    timeout=10s
+    
+    # Login completed successfully - dashboard is now accessible
+    Log    Login completed successfully - dashboard accessible    INFO
 
 Extract Verification Code
     [Arguments]    ${email_content}
@@ -1016,3 +1019,12 @@ Create Simple Word Report
     
     Create File    ${report_filename}    ${report_content}
     Log    Simple report created: ${report_filename}    INFO
+
+# Login Only Test - stops after successful login
+Login Only Test
+    [Documentation]    Performs login only and stops before AI Assistant functionality
+    Trigger Verification Code Sending
+    Wait And Retrieve Verification Code And Login
+    # Test stops here - login completed successfully
+    Log    Login test completed - stopping before AI Assistant functionality    INFO
+    Capture Page Screenshot    ${OUTPUT_DIR}/ai_assistant/login_only_completed.png

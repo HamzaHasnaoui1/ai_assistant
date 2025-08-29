@@ -6,7 +6,8 @@ Suite de tests automatisés pour l'Assistant IA de la plateforme ATG, utilisant 
 ## Structure du Projet
 ```
 ai_assistant/
-├── ai_assistant.robot              # Fichier principal de test
+├── ai_assistant.robot              # Fichier principal de test (complet)
+├── ai_assistant_login_only.robot   # Test d'authentification uniquement
 ├── ressources/
 │   ├── variables.robot             # Variables de configuration
 │   └── keywords.robot              # Keywords et fonctions réutilisables
@@ -14,11 +15,14 @@ ai_assistant/
 ├── generate_html_dashboard.py      # Script de génération de dashboard HTML
 ├── cleanup_project.py              # Script de nettoyage automatique
 ├── test_config.py                  # Configuration centralisée des tests
+├── login_test_config.py            # Configuration spécifique au test de login
+├── test_login_only.py              # Script de validation du test de login
 ├── create_test_screenshots.py      # Créateur de screenshots simulés
 ├── requirements.txt                 # Dépendances Python
 ├── chromedriver.exe                # Driver Chrome pour Selenium
 ├── .gitignore                      # Exclusions Git
 ├── README.md                       # Documentation du projet
+├── README_LOGIN_ONLY.md            # Documentation spécifique au test de login
 └── results/                        # Dossier des résultats de test
     ├── ai_assistant/               # Screenshots des tests
     ├── ai_assistant_documentation/ # Documentation et logs
@@ -73,10 +77,22 @@ pip install -r requirements.txt
 
 ## Exécution des Tests
 
-### Test Principal
+### Test Principal (Complet)
 ```bash
 robot ai_assistant.robot
 ```
+
+### Test de Login Uniquement
+```bash
+# Test d'authentification uniquement - s'arrête avant AI Assistant
+robot ai_assistant_login_only.robot
+```
+
+**Avantages du test de login uniquement :**
+- ⚡ **Rapide** : ~1-2 minutes au lieu de 3-5 minutes
+- 🔐 **Focalisé** : Teste uniquement l'authentification
+- 🧪 **Développement** : Idéal pour les tests de régression
+- 📸 **Screenshots** : Génère tous les écrans de connexion
 
 ### Génération de Rapports
 ```bash
